@@ -3,6 +3,8 @@ SCRIPT=$(readlink $0 || true)
 if [ -z $SCRIPT ]; then
     SCRIPT=$0
 fi
+pwd=$(pwd -P)
+
 SCRIPT_DIR="$(cd `dirname "$SCRIPT"` && pwd -P)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd -P)"
 if [ -z $LORAWAN_HOME ]; then
@@ -10,7 +12,9 @@ if [ -z $LORAWAN_HOME ]; then
 fi
 
 __possible_sys="$ROOT_DIR/releases/{{release_version}}/sys.config"
-if [ -f "$__possible_sys" ]; then
+if [ -f "$pwd/lorawan_server.config" ]; then
+    SYS_CONFIG="$pwd/lorawan_server.config";
+elif [ -f "$__possible_sys" ]; then
     SYS_CONFIG="$__possible_sys"
 elif [ -L "$__possible_sys".orig ]; then
     mv "$__possible_sys".orig "$__possible_sys"
