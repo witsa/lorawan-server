@@ -161,11 +161,11 @@ ensure_gun(#state{conn=#connector{connid=ConnId, uri=Uri}, pid=undefined}=State)
     {ConnPid, Prefix} =
         case http_uri:parse(binary_to_list(Uri), [{scheme_defaults, [{http, 80}, {https, 443}]}]) of
             {ok, {http, _UserInfo, HostName, Port, Path, _Query}} ->
-                {ok, Pid} = gun:open(HostName, Port),
+                {ok, Pid} = gun:open(HostName, Port, #{http_opts => #{keepalive => infinity}}),
                 {Pid, Path};
             {ok, {https, _UserInfo, HostName, Port, Path, _Query}} ->
                 Opts = application:get_env(lorawan_server, ssl_options, []),
-                {ok, Pid} = gun:open(HostName, Port, #{transport=>ssl, transport_opts=>Opts}),
+                {ok, Pid} = gun:open(HostName, Port, #{transport=>ssl, transport_opts=>Opts, http_opts => #{keepalive => infinity}}),
                 {Pid, Path}
         end,
     MRef = monitor(process, ConnPid),
