@@ -166,6 +166,7 @@
     subscribe_qos :: 0 | 1 | 2,
     subscribe :: 'undefined' | binary(),
     received :: 'undefined' | binary(),
+    keepalive :: integer(),
     enabled :: boolean(),
     failed=[] :: [binary()],
     client_id :: 'undefined' | binary(),

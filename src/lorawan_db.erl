@@ -231,6 +231,8 @@ get_value(user, pass_ha1, PropList) ->
     end;
 get_value(connector, publish_uplinks, PropList) ->
     get_value0(published, publish_uplinks, PropList);
+get_value(connector, keepalive, PropList) ->
+    get_value0(published, keepalive, PropList);
 get_value(connector, received, PropList) ->
     get_value0(consumed, received, PropList);
 get_value(handler, app, PropList) ->

@@ -946,6 +946,7 @@ myApp.config(['NgAdminConfigurationProvider', function (nga) {
             .choices(qos_choices),
         nga.field('publish_uplinks'),
         nga.field('publish_events'),
+        nga.field('keepalive','number').label('Keep Alive Requests frequency (s)'),
         nga.field('subscribe_qos', 'choice').label('Subscribe QoS')
             .choices(qos_choices),
         nga.field('subscribe').label('Subscribe'),

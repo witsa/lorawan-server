@@ -156,16 +156,17 @@ ensure_gun(#state{pid=Pid}=State) when is_pid(Pid) ->
 ensure_gun(#state{conn=#connector{uri= <<"http:">>}, pid=undefined}=State) ->
     % should not be running
     State;
-ensure_gun(#state{conn=#connector{connid=ConnId, uri=Uri}, pid=undefined}=State) ->
+ensure_gun(#state{conn=#connector{connid=ConnId, uri=Uri, keepalive=KeepAlive}, pid=undefined}=State) ->
     lager:debug("Connecting ~s to ~s", [ConnId, Uri]),
+    KeepAliveTimeout = case KeepAlive > 0 of true -> KeepAlive; false -> infinity end,
     {ConnPid, Prefix} =
         case http_uri:parse(binary_to_list(Uri), [{scheme_defaults, [{http, 80}, {https, 443}]}]) of
             {ok, {http, _UserInfo, HostName, Port, Path, _Query}} ->
-                {ok, Pid} = gun:open(HostName, Port, #{http_opts => #{keepalive => infinity}}),
+                {ok, Pid} = gun:open(HostName, Port, #{http_opts => #{keepalive => KeepAliveTimeout}}),
                 {Pid, Path};
             {ok, {https, _UserInfo, HostName, Port, Path, _Query}} ->
                 Opts = application:get_env(lorawan_server, ssl_options, []),
-                {ok, Pid} = gun:open(HostName, Port, #{transport=>ssl, transport_opts=>Opts, http_opts => #{keepalive => infinity}}),
+                {ok, Pid} = gun:open(HostName, Port, #{transport=>ssl, transport_opts=>Opts, http_opts => #{keepalive => KeepAliveTimeout}}),
                 {Pid, Path}
         end,
     MRef = monitor(process, ConnPid),
